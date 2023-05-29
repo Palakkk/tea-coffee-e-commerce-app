@@ -1,0 +1,91 @@
+{% extends 'common.html' %}
+
+{% block content %}
+
+{% load static %}
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+-->
+<!DOCTYPE html>
+<html lang="zxx">
+
+    <head>
+        <title> Profile</title>
+
+        <!-- Meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <!-- Google fonts -->
+        <link href="//fonts.googleapis.com/css?family=Nunito:400,700&display=swap" rel="stylesheet">
+
+        <!-- CSS Stylesheet -->
+        <link rel="stylesheet" href="{% static 'css/style.css' %} " type="text/css" media="all" />
+
+    </head>
+
+    <body>
+        <div class="w3l-loginblock signinform">
+            <div class="logo">
+                <a class="brand-logo" href="index.html">Profile</a>
+            </div>
+            <!-- Main content -->
+            <div class="row map-content-9">
+                <form  method="post" class="">
+                    {% csrf_token %}
+                    <div class="info-grids">
+                        <h1>User Profile</h1>
+                        <p><strong>Username:</strong> {{ profile.name }}</p>
+                        <p><strong>Email:</strong> {{ profile.email }}</p>
+                        <p><strong>Contact:</strong> {{ profile.phone }}</p>
+                        <br>
+                        <h2>Orders Placed</h2>
+                        {% if orders %}
+                        <div class="table-responsive">
+                            <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Product ID</th>
+                                        <th>Product Quantity</th>
+                                        <!-- Add more table headers for other order attributes -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                        <td>{{ order.productid }}</td>
+                                        <td>{{ order.productqty }}</td>
+                                        <!-- Add more table cells for other order attributes -->
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p>No orders found.</p>
+                        {% endif %}
+                        <button type="submit" name="logout" class="btn btn-primary btn-style">Logout</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- {% if message %}
+                <script>alert("{{message}}")</script>{% endif %} -->
+
+        </div>
+        <!-- //main content -->
+
+        </div>
+
+        <!-- fontawesome v5-->
+        <script src="{% static 'js/fontawesome.js' %} "></script>
+
+    </body>
+
+</html>
+
+{% endblock %}
