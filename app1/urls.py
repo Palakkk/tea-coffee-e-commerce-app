@@ -20,6 +20,7 @@ urlpatterns = [
     path('buy-now/',buynow,name='buy'),
     path('razorpayView/',razorpayView,name='razorpayView'),
     path('paymenthandler/',paymenthandler,name='paymenthandler'),
-    path('successview/',successview,name="orderSuccessView")
+    path('successview/',successview,name="orderSuccessView"),
+    path('search/',searchview,name="search")
  
 ]

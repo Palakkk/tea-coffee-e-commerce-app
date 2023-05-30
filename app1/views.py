@@ -341,3 +341,13 @@ def successview(request):
         return render(request,'order_sucess.html',{'a':a})
     else:
         return HttpResponseBadRequest()
+    
+from django.db.models import Q
+def searchview(request):
+    search_post = request.GET.get('search')
+    if search_post:
+        posts = Product.objects.filter(Q(category__categoryname__icontains=search_post)|Q(name__icontains=search_post)).distinct()
+    else:
+        # If not searched, return default posts
+        posts = Product.objects.all().order_by("-date_created")
+    return render(request,'productall.html',{'data':posts})  

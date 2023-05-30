@@ -34,9 +34,11 @@ html {
     box-sizing: border-box;
     font-family: 'Nunito', sans-serif;
 }
-.custom-bg-color{
+
+.custom-bg-color {
     background-color: #000;
 }
+
 /*  wrapper */
 .wrapper {
     width: 100%;
@@ -149,6 +151,23 @@ img {
     font-weight: bold;
     color: #000000;
     text-decoration: none;
+}
+
+.nav-container {
+    position: relative;
+}
+
+.search-input {
+    border-radius: 0;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .map-content-9 {
@@ -313,9 +332,11 @@ img {
     padding: 0;
     margin: 0;
 }
-.custom-btn{
+
+.custom-btn {
     background-color: var(--heading-color);
 }
+
 .btn-style {
     font-size: 18px;
     line-height: 28px;
