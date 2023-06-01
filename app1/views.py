@@ -284,28 +284,28 @@ def buynow(request):
 #     else:
 #         return redirect('login1')
 
-def view_cart(request):
-    if 'email' in request.session:
-        a = request.session['email']
-        cart_items = []
+# def view_cart(request):
+#     if 'email' in request.session:
+#         a = request.session['email']
+#         cart_items = []
         
-        if 'cart' in request.session:
-            for item in request.session['cart']:
-                product = Product.objects.get(id=item['product_id'])
-                cart_item = {
-                    'product': product,
-                    'quantity': item['quantity'],
-                    'subtotal': item['quantity'] * item['price']
-                }
-                cart_items.append(cart_item)
+#         if 'cart' in request.session:
+#             for item in request.session['cart']:
+#                 product = Product.objects.get(id=item['product_id'])
+#                 cart_item = {
+#                     'product': product,
+#                     'quantity': item['quantity'],
+#                     'subtotal': item['quantity'] * item['price']
+#                 }
+#                 cart_items.append(cart_item)
 
-        context = {
-            'cart_items': cart_items,
-            'a':a
-        }
-        return render(request, 'cart.html', context=context)
-    else:
-        return redirect('login1')
+#         context = {
+#             'cart_items': cart_items,
+#             'a':a
+#         }
+#         return render(request, 'cart.html', context=context)
+#     else:
+#         return redirect('login1')
 
 # def paynow(request):
 #     if 'email' in request.session:
@@ -346,9 +346,7 @@ client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
 
 def razorpayView(request):
     currency = 'INR'
-    # amount = int(request.session['orderAmount'])*100
-    order_amount = sum(item['quantity'] * item['price'] for item in request.session['cart'])
-    amount = int(order_amount) * 100
+    amount = int(request.session['orderAmount'])*100
     # Create a Razorpay Order
     razorpay_order = client.order.create(dict(amount=amount,currency=currency,payment_capture='0'))
     # order id of newly created order.
