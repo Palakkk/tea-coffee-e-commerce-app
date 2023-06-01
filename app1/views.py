@@ -253,6 +253,92 @@ def buynow(request):
     else:
         return redirect('login1')
 
+# adding multiple products to cart
+# def buynow(request):
+#     if 'email' in request.session:
+#         a = UserRegister.objects.get(email=request.session['email'])
+#         if request.method == "POST":
+#             product_id = request.POST['id']
+#             quantity = int(request.POST['quantity'])
+#             product = Product.objects.get(id=product_id)
+
+#             if quantity <= product.quantity:  # Check if requested quantity is available
+#                 cart_item = {
+#                     'product_id': product_id,
+#                     'quantity': quantity,
+#                     'price': product.price
+#                 }
+
+#                 if 'cart' not in request.session:
+#                     request.session['cart'] = []
+
+#                 request.session['cart'].append(cart_item)
+#                 messages.success(request, 'Product added to cart successfully')
+#                 request.session.modified = True
+#                 return redirect(request.META.get('HTTP_REFERER', 'index'))
+#             else:
+#                 messages.error(request, 'Requested quantity exceeds available quantity')
+#                 return redirect(request.META.get('HTTP_REFERER', 'index'))
+#         else:
+#             return redirect(request.META.get('HTTP_REFERER', 'index'))
+#     else:
+#         return redirect('login1')
+
+# def view_cart(request):
+#     if 'email' in request.session:
+#         a = request.session['email']
+#         cart_items = []
+        
+#         if 'cart' in request.session:
+#             for item in request.session['cart']:
+#                 product = Product.objects.get(id=item['product_id'])
+#                 cart_item = {
+#                     'product': product,
+#                     'quantity': item['quantity'],
+#                     'subtotal': item['quantity'] * item['price']
+#                 }
+#                 cart_items.append(cart_item)
+
+#         context = {
+#             'cart_items': cart_items,
+#             'a':a
+#         }
+#         return render(request, 'cart.html', context=context)
+#     else:
+#         return redirect('login1')
+
+# def paynow(request):
+#     if 'email' in request.session:
+#         a = UserRegister.objects.get(email=request.session['email'])
+#         cart_items = []        
+#         if 'cart' in request.session:
+#             total_amount=0
+#             for item in request.session['cart']:
+#                 product = Product.objects.get(id=item['product_id'])
+                
+#                 product_id = item['product_id']
+#                 quantity = item['quantity']
+
+#                 if quantity <= product.quantity:  # Check if requested quantity is available
+#                     total_amount += product.price * quantity
+#                 else:
+#                     messages.error(request, f"Requested quantity for product {product_id} exceeds available quantity")
+#                     return redirect(request.META.get('HTTP_REFERER', 'index'))
+
+#             request.session['productid'] = [item['product_id'] for item in request.session['cart']]
+#             request.session['quantity'] = [item['quantity'] for item in request.session['cart']]
+#             request.session['userid'] = a.pk
+#             request.session['username'] = a.name
+#             request.session['userEmail'] = a.email
+#             request.session['userContact'] = a.phone
+#             request.session['address'] = a.address
+#             request.session['orderAmount'] = total_amount
+#             request.session['paymentMethod'] = "Razorpay"
+#             request.session['transactionId'] = ""
+#             return redirect('razorpayView')
+#     else:
+#         return redirect('login1')
+
 
 RAZOR_KEY_ID = 'rzp_test_PCLwUnDh0gx1EM'
 RAZOR_KEY_SECRET = '5X09bgMznDr8vOIuQ0xCkZ53'
@@ -335,6 +421,63 @@ def paymenthandler(request):
        # if other than POST request is made.
         return HttpResponseBadRequest()
 
+# CART
+# def paymenthandler(request):
+    # if request.method == "POST":
+    #     try:
+    #         payment_id = request.POST.get('razorpay_payment_id', '')
+    #         razorpay_order_id = request.POST.get('razorpay_order_id', '')
+    #         signature = request.POST.get('razorpay_signature', '')
+
+    #         params_dict = {
+    #             'razorpay_order_id': razorpay_order_id,
+    #             'razorpay_payment_id': payment_id,
+    #             'razorpay_signature': signature
+    #         }
+
+    #         result = client.utility.verify_payment_signature(params_dict)
+            
+    #         if result is None:
+    #             total_amount = 0
+    #             for item in request.session['cart']:
+    #                 product = Product.objects.get(id=item['product_id'])
+    #                 amount = item['quantity'] * item['price']
+    #                 total_amount += amount
+    #                 product.quantity -= item['quantity']
+    #                 product.save()
+
+    #                 order = Ordermodel(
+    #                     productid=item['product_id'],
+    #                     productqty=item['quantity'],
+    #                     userId=request.session['userid'],
+    #                     userName=request.session['username'],
+    #                     userEmail=request.session['userEmail'],
+    #                     userContact=request.session['userContact'],
+    #                     address=request.session['address'],
+    #                     orderAmount=amount,
+    #                     paymentMethod=request.session['paymentMethod'],
+    #                     transactionId=payment_id
+    #                 )
+    #                 order.save()
+
+    #             del request.session['cart']
+    #             del request.session['userid']
+    #             del request.session['username']
+    #             del request.session['userEmail']
+    #             del request.session['userContact']
+    #             del request.session['address']
+    #             del request.session['paymentMethod']
+
+    #             return redirect('orderSuccessView')
+    #         else:
+    #             messages.error(request, 'Payment verification failed')
+    #             return HttpResponseBadRequest()
+    #     except:
+    #         messages.error(request, 'An error occurred during payment')
+    #         return HttpResponseBadRequest()
+    # else:
+    #     return HttpResponseBadRequest()
+
 def successview(request):
     if 'email' in request.session:
         a=request.session['email']
@@ -351,3 +494,44 @@ def searchview(request):
         # If not searched, return default posts
         posts = Product.objects.all().order_by("-date_created")
     return render(request,'productall.html',{'data':posts})  
+
+from django.core.mail import send_mail
+import random
+def forgot(request):
+    if request.POST:
+        useremail=request.POST['email']
+        try:
+            data=UserRegister.objects.get(email=useremail)
+            otp = random.randint(100000, 999999)
+            if data:
+                send_mail(
+                "Forgot Password",
+                "Dear " +str(data.name)+"\n Your OTP is :"+str(otp),
+                "youremail",
+                [useremail],
+                fail_silently=False,
+                )
+                request.session['otp'] = otp  # Store OTP in session
+                return redirect('verify')
+                # return render(request, 'verify.html', {'otp': otp,'email':data, 'message':'OTP is sent to your mail'})  # Render the verify.html template with otp
+            else:
+                return render(request,'forgot.html',{'message':'Email Id Not Found'})
+        except:
+            return render(request,'forgot.html',{'message':'Email Id Not There'})
+    return render(request,'forgot.html')
+
+def verify(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        print(email)
+        otp = request.POST.get('otp')
+        if otp == str(request.session.get('otp')):
+            print(otp)
+            del request.session['otp']
+            request.session['email']=email
+            print(request.session['email'])
+            return redirect('index')
+        else:
+            return render(request,'verify.html',{'message':'Invalid OTP'})
+    
+    return render(request, 'verify.html')
